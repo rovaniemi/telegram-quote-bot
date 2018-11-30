@@ -6,6 +6,11 @@
   "engines": {
     "node": "6.9.5"
   },
+  "scripts": {
+    "start": "nodemon --exec babel-node src/server.js",
+    "build": "babel src --out-dir dist",
+    "serve": "node dist/server.js"
+  },
   "eslintConfig": {
     "env": {
       "browser": true,
@@ -16,18 +21,25 @@
     "body-parser": "~1.15.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
-    "dotenv": "*",
+    "dotenv": "6.1.0",
     "eslint": "^3.15.0",
     "express": "~4.14.0",
     "jade": "~1.11.0",
     "moment": "^2.17.1",
-    "mongoose": "*",
-    "mongoose-simple-random": "*",
+    "mongoose": "5.3.14",
+    "mongoose-simple-random": "0.4.1",
     "morgan": "~1.7.0",
-    "node-cron": "*",
+    "node-cron": "2.0.3",
     "node-telegram-bot-api": "^0.25.0",
     "promise": "^7.1.1",
-    "request": "*",
+    "request": "2.88.0",
     "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "nodemon": "^1.18.7"
   }
 }
