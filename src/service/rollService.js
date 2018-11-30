@@ -1,27 +1,24 @@
 import { sendMessage } from '../bot/botOutput'
 
-function roll(msg, match) {
-  var input = match[4]
-  var length = 8
-  if (!isNaN(match[4])) {
-    var output = 0
+const roll = (msg, match) => {
+  const input = match[4]
+  let length = 8
+  let output = 0
+  if (!isNaN(input) && input > 0) {
+    output = randomIntFromInterval(1, input)
     length = input.toString().length
-    if (input > 0) {
-      output = randomIntFromInterval(1, input)
-    }
   } else {
     output = randomIntFromInterval(1, 99999999)
   }
-
   output = pad(output, length)
   sendMessage(msg, output)
 }
 
-function randomIntFromInterval(min, max) {
+const randomIntFromInterval = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function pad(n, width, z) {
+const pad = (n, width, z) => {
   z = z || '0'
   n = n + ''
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n
