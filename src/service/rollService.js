@@ -1,4 +1,4 @@
-var botOutput = require('../bot/botOutput')
+import { sendMessage } from '../bot/botOutput'
 
 function roll(msg, match) {
   var input = match[4]
@@ -14,7 +14,7 @@ function roll(msg, match) {
   }
 
   output = pad(output, length)
-  botOutput.sendMessage(msg, output)
+  sendMessage(msg, output)
 }
 
 function randomIntFromInterval(min, max) {
@@ -27,6 +27,6 @@ function pad(n, width, z) {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n
 }
 
-module.exports = {
+export default {
   roll: roll
 }

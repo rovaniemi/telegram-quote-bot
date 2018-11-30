@@ -1,8 +1,7 @@
 import express from 'express'
+import config from '../config'
+import { Quote, Group } from '../schemas'
 const app = express()
-
-var db = require('../schemas')
-var config = require('../config')
 
 app.get('/api/:chatId/stats', (req, res) => {
   if (!req.params.chatId) {
@@ -10,14 +9,14 @@ app.get('/api/:chatId/stats', (req, res) => {
     return
   }
 
-  db.Group.findOne({ chatId: req.params.chatId }, (err, arr) => {
+  Group.findOne({ chatId: req.params.chatId }, (err, arr) => {
     if (err) {
       console.error('shit brok', err)
       res.status(500).json({ error: 'shit brok' })
       return
     }
 
-    db.Quote.count({ group: arr._id }, (err, count) => {
+    Quote.count({ group: arr._id }, (err, count) => {
       res.status(200).json({
         data: {
           quotes_requested: arr.counts.requests,

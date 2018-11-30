@@ -1,11 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api'
+import groupService from './../service/groups/groupService'
+import quoteFinder from './../service/quotes/quoteFinder'
+import rollService from './../service/rollService'
+import manageQuotes from './../service/quotes/manageQuotes'
 const token = process.env.API_TOKEN
 const bot = new TelegramBot(token, { polling: true })
-
-var groupService = require('./../service/groups/groupService')
-var quoteFinder = require('./../service/quotes/quoteFinder')
-var rollService = require('./../service/rollService')
-var manageQuotes = require('./../service/quotes/manageQuotes')
 
 bot.onText(/\/start/, function(msg, match) {
   groupService.start(msg)
@@ -29,10 +28,6 @@ bot.onText(/\/(quote(\@puppy2_bot)?)( (.+)|\0{0})/, function(msg, match) {
 bot.onText(/((?!)|(^@puppy2_bot?( (.+)|\0{0})))/, function(msg, match) {
   quoteFinder.quote(msg, match)
 })
-
-// bot.onText(/\/(q(\@puppy2_bot)?)( (.+)|\0{0})/, function (msg, match) {
-//     quoteFinder.quote(msg, match);
-// });
 
 bot.onText(/\/(imfeelinglucky(\@puppy2_bot)?)/, function(msg, match) {
   quoteFinder.imFeelingLucky(msg)

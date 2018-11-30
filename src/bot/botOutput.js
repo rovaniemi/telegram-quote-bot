@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api'
 const bot = new TelegramBot(process.env.API_TOKEN)
 
-function sendMessage(msg, message) {
+export function sendMessage(msg, message) {
   const options = {
     parse_mode: 'Markdown'
   }
@@ -9,7 +9,7 @@ function sendMessage(msg, message) {
   bot.sendMessage(msg.chat.id, parseMessage(msg, message), options)
 }
 
-function sendQuote(msg, quote, message) {
+export function sendQuote(msg, quote, message) {
   if (message) {
     quoteSender(msg, message + quote.quote)
     return
@@ -120,9 +120,4 @@ function parseMessage(msg, message) {
 String.prototype.replaceAll = function(search, replacement) {
   var target = this
   return target.split(search).join(replacement)
-}
-
-module.exports = {
-  sendMessage: sendMessage,
-  sendQuote: sendQuote
 }

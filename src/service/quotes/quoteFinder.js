@@ -1,17 +1,13 @@
-var db = require('./../../schemas')
-var TelegramBot = require('node-telegram-bot-api')
-
-require('dotenv').config()
-var Promise = require('promise')
-
-var bot = new TelegramBot(process.env.API_TOKEN)
-var config = require('../../config')
-var botOutput = require('../../bot/botOutput')
+import { Quote, Group } from '../../schemas'
+import TelegramBot from 'node-telegram-bot-api'
+import config from '../../config'
+import { sendQuote } from '../../bot/botOutput'
+const bot = new TelegramBot(process.env.API_TOKEN)
 
 function sleep(msg) {
   var chatId = msg.chat.id
 
-  db.Group.findOne({ chatId: chatId }, function(err, arr) {
+  Group.findOne({ chatId: chatId }, function(err, arr) {
     if (err) {
       console.log(err.stack)
       return
@@ -39,7 +35,7 @@ function sleep(msg) {
 
 function quote(msg, match) {
   var chatId = msg.chat.id
-  db.Group.findOne({ chatId: chatId }, function(err, arr) {
+  Group.findOne({ chatId: chatId }, function(err, arr) {
     if (err) {
       console.log(err.stack)
       return
@@ -90,7 +86,7 @@ function quote(msg, match) {
 function imFeelingLucky(msg, match) {
   var chatId = msg.chat.id
 
-  db.Group.findOne({ chatId: chatId }, function(err, arr) {
+  Group.findOne({ chatId: chatId }, function(err, arr) {
     if (err) {
       console.log(err.stack)
       return
@@ -128,7 +124,7 @@ function imFeelingLucky(msg, match) {
 function voteCallback(callbackQuery) {
   var parts = callbackQuery.data.split('|')
   if (parts[0] == '+' || parts[0] == '-') {
-    db.Quote.findById(parts[1], function(err, quote) {
+    Quote.findById(parts[1], function(err, quote) {
       if (err) {
         console.log(err.stack)
         return
@@ -199,9 +195,9 @@ function getQuoteForGroup(msg, group_id, search, fn) {
     }
   }
   console.log(filter)
-  db.Quote.count(filter).exec(function(err, count) {
+  Quote.count(filter).exec(function(err, count) {
     var random = Math.floor(Math.random() * count)
-    db.Quote.findOne(filter)
+    Quote.findOne(filter)
       .skip(random)
       .exec(function(err, result) {
         if (err) {
@@ -209,46 +205,16 @@ function getQuoteForGroup(msg, group_id, search, fn) {
           return
         }
         if (result) {
-          botOutput.sendQuote(msg, result)
+          sendQuote(msg, result)
         } else {
           getQuoteForGroup(msg, group_id, '.')
         }
         // result is random
       })
   })
-
-  // db.Quote.findRandom(filter, function (err, result) {
-  //     // console.log(err, result);
-  //     if(!result){
-  //         console.log("DID IT!!!")
-  //     } else console.log("found something...");
-  //     if (err) {
-  //         console.log(err.stack);
-  //         return;
-  //     }
-  //     if (result) {
-  //         botOutput.sendQuote(msg, result);
-  //     } else {
-  //         getQuoteForGroup(msg, group_id, '.');
-  //     }
-  // });
 }
 
-function sentTotallyRandom(msg) {
-  var chatId = msg.chat.id
-
-  db.Quote.findRandom(function(err, quote) {
-    if (err) {
-      console.log(err.stack)
-      return
-    }
-    if (quote[0]) {
-      botOutput.sendQuote(msg, quote[0])
-    }
-  })
-}
-
-module.exports = {
+export default {
   quote: quote,
   imFeelingLucky: imFeelingLucky,
   voteCallback: voteCallback

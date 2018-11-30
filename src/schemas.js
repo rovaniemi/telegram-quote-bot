@@ -1,9 +1,8 @@
 import mongoose from 'mongoose'
 import random from 'mongoose-simple-random'
+const Schema = mongoose.Schema
 
-let Schema = mongoose.Schema
-
-var quotesSchema = new Schema({
+const quotesSchema = new Schema({
   quote: String,
   type: String,
   resourceId: String,
@@ -19,7 +18,7 @@ var quotesSchema = new Schema({
   }
 })
 
-var groupsSchema = new Schema({
+const groupsSchema = new Schema({
   chatId: { type: Number, unique: true },
   users: [{ userId: String, lastQuote: Number }],
   lastQuote: { type: Number, default: 0 },

@@ -1,11 +1,10 @@
-var db = require('./../../schemas')
-var TelegramBot = require('node-telegram-bot-api')
-var bot = new TelegramBot(process.env.API_TOKEN)
-var config = require('../../config')
-var botOutput = require('../../bot/botOutput')
+import { Quote, Group } from '../../schemas'
+import TelegramBot from 'node-telegram-bot-api'
+import { sendMessage, sendQuote } from '../../bot/botOutput'
+const bot = new TelegramBot(process.env.API_TOKEN)
 
 function add(msg, match) {
-  var chatId = msg.chat.id
+  const chatId = msg.chat.id
 
   if (msg.reply_to_message) {
     if (msg.reply_to_message.text) {
@@ -56,7 +55,7 @@ function addQuote(addedBy, msg, toAdd, type, resourceId) {
   var groupId = 0
   var quoteId = 0
 
-  db.Group.findOne({ chatId: chatId }, function(err, group) {
+  Group.findOne({ chatId: chatId }, function(err, group) {
     if (!group) {
       return
     }
@@ -66,7 +65,7 @@ function addQuote(addedBy, msg, toAdd, type, resourceId) {
       type = 'text'
     }
 
-    var newQuote = db.Quote({
+    var newQuote = Quote({
       quote: toAdd,
       addedBy: addedBy,
       group: groupId,
@@ -87,11 +86,9 @@ function addQuote(addedBy, msg, toAdd, type, resourceId) {
       }
 
       if (quote) {
-        // quoteId = quote._id;
-        // bot.sendMessage(chatId, "Saved quote: " + quote.quote, quote._id);
-        botOutput.sendQuote(msg, quote, ':user: added quote: ')
+        sendQuote(msg, quote, ':user: added quote: ')
       } else {
-        bot.sendMessage(chatId, 'lol no')
+        sendMessage(chatId, 'lol no')
       }
     })
   })
@@ -103,37 +100,34 @@ function delQuote(msg, match, idBool) {
     return
   }
   if (idBool) {
-    db.Quote.find({ _id: match[3] })
+    Quote.find({ _id: match[3] })
       .remove()
       .exec(function(err) {
         if (err) {
-          botOutput.sendMessage(msg, "couldn't find it")
+          sendMessage(msg, "couldn't find it")
           return
         }
-        botOutput.sendMessage(msg, 'deleted it :P')
+        sendMessage(msg, 'deleted it :P')
       })
   } else {
     var re = new RegExp(match[3], 'i')
 
-    db.Quote.find({ quote: re }, function(err, quote) {
+    Quote.find({ quote: re }, function(err, quote) {
       if (err) {
         console.log(err.stack)
         return
       }
       if (quote.length > 1) {
-        botOutput.sendMessage(
-          msg,
-          'found ' + quote.length + ' quotes, did nothing.'
-        )
+        sendMessage(msg, 'found ' + quote.length + ' quotes, did nothing.')
         findQuote(msg, match)
       }
       if (quote.length === 1) {
         var text = '*deleted quote*: ' + quote[0].quote
-        db.Quote.findByIdAndRemove(quote[0]._id, function(err) {
-          botOutput.sendMessage(msg, text)
+        Quote.findByIdAndRemove(quote[0]._id, function(err) {
+          sendMessage(msg, text)
         })
       } else {
-        botOutput.sendMessage(msg, 'found nothing...')
+        sendMessage(msg, 'found nothing...')
       }
     })
   }
@@ -143,7 +137,7 @@ function findQuote(msg, match) {
   var chatId = msg.chat.id
   var re = new RegExp(escape(match[3].trim()), 'i')
 
-  db.Quote.find({ quote: re }, function(err, quote) {
+  Quote.find({ quote: re }, function(err, quote) {
     if (msg.from.id != process.env.JULIUS) {
       return
     }
@@ -155,7 +149,7 @@ function findQuote(msg, match) {
   })
 }
 
-module.exports = {
+export default {
   add: add,
   findQuote: findQuote,
   delQuote: delQuote
