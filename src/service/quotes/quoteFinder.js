@@ -1,4 +1,4 @@
-import { Quote, Group } from '../../schemas'
+import db from '../../schemas'
 import TelegramBot from 'node-telegram-bot-api'
 import config from '../../config'
 import { sendQuote, sendMessage } from '../../bot/botOutput'
@@ -6,7 +6,7 @@ const bot = new TelegramBot(process.env.API_TOKEN)
 
 const quote = (msg, match) => {
   const chatId = msg.chat.id
-  Group.findOne({ chatId: chatId }, (err, arr) => {
+  db.Group.findOne({ chatId: chatId }, (err, arr) => {
     if (err) {
       return
     }
@@ -46,7 +46,7 @@ const quote = (msg, match) => {
 const voteCallback = callbackQuery => {
   const parts = callbackQuery.data.split('|')
   if (parts[0] == '+' || parts[0] == '-') {
-    Quote.findById(parts[1], (err, quote) => {
+    db.Quote.findById(parts[1], (err, quote) => {
       if (err) {
         console.log(err.stack)
         return
@@ -113,11 +113,11 @@ const getQuoteForGroup = (msg, group_id, search) => {
     }
   }
 
-  Quote.count(filter).exec(function(err, count) {
+  db.Quote.count(filter).exec((err, count) => {
     const random = Math.floor(Math.random() * count)
-    Quote.findOne(filter)
+    db.Quote.findOne(filter)
       .skip(random)
-      .exec(function(err, result) {
+      .exec((err, result) => {
         if (err) {
           return
         }

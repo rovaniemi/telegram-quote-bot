@@ -1,14 +1,14 @@
-import { Group, Quote } from '../../schemas'
+import db from '../../schemas'
 import { sendMessage } from '../../bot/botOutput'
 import config from '../../config'
 
-function start(msg) {
+const start = msg => {
   if (!msg) {
     return
   }
-  var chatId = msg.chat.id
+  const chatId = msg.chat.id
 
-  Group.findOne({ chatId: chatId }, function(err, group) {
+  db.Group.findOne({ chatId: chatId }, (err, group) => {
     if (!group) {
       addGroup(msg)
       return
@@ -18,30 +18,30 @@ function start(msg) {
   })
 }
 
-function addGroup(msg) {
-  var chatId = msg.chat.id
+const addGroup = msg => {
+  const chatId = msg.chat.id
 
-  var newGroup = Group({
+  const newGroup = db.Group({
     chatId: chatId,
     lastQuote: 0
   })
-  newGroup.save(function(err) {
+  newGroup.save(err => {
     if (err) throw err
     sendMessage(msg, 'Group successfully added! :)')
   })
 }
 
-function stats(msg) {
-  var chatId = msg.chat.id
-  Group.findOne({ chatId: chatId }, function(err, arr) {
-    var d = new Date()
+const stats = msg => {
+  const chatId = msg.chat.id
+  db.Group.findOne({ chatId: chatId }, (err, arr) => {
+    const d = new Date()
     if (d.getTime() - arr.lastQuote < config.spamSec * 1000) {
       console.log(
         'Spam block! Time left: ' + -(d.getTime() - arr.lastQuote) / 1000
       )
       return
     }
-    Quote.count({ group: arr._id }, function(err, count) {
+    db.Quote.count({ group: arr._id }, (err, count) => {
       sendMessage(
         msg,
         'Quotes requested: ' +

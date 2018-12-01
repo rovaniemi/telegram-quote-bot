@@ -35,5 +35,7 @@ const groupsSchema = new Schema({
 
 quotesSchema.plugin(random)
 
-export const Quote = mongoose.model('Quote', quotesSchema)
-export const Group = mongoose.model('Group', groupsSchema)
+export default {
+  Quote: mongoose.model('Quote', quotesSchema),
+  Group: mongoose.model('Group', groupsSchema)
+}

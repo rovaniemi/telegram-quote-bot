@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api'
 const bot = new TelegramBot(process.env.API_TOKEN)
 
-export function sendMessage(msg, message) {
+export const sendMessage = (msg, message) => {
   const options = {
     parse_mode: 'Markdown'
   }
@@ -9,7 +9,7 @@ export function sendMessage(msg, message) {
   bot.sendMessage(msg.chat.id, parseMessage(msg, message), options)
 }
 
-export function sendQuote(msg, quote, message) {
+export const sendQuote = (msg, quote, message) => {
   if (message) {
     quoteSender(msg, message + quote.quote)
     return
@@ -31,7 +31,7 @@ export function sendQuote(msg, quote, message) {
   quoteSender(msg, quote.quote, quote._id)
 }
 
-function quoteSender(msg, message, quoteId) {
+const quoteSender = (msg, message, quoteId) => {
   const chatId = msg.chat.id
 
   message = parseMessage(msg, message)
@@ -41,9 +41,9 @@ function quoteSender(msg, message, quoteId) {
   bot.sendMessage(chatId, message, options)
 }
 
-function sendFileType(msg, quote) {
-  var chatId = msg.chat.id
-  var options = getOptions(quote._id)
+const sendFileType = (msg, quote) => {
+  const chatId = msg.chat.id
+  const options = getOptions(quote._id)
 
   if (quote.type == 'voice') {
     bot.sendVoice(chatId, quote.resourceId, options)
@@ -61,14 +61,13 @@ function sendFileType(msg, quote) {
   }
 }
 
-function sendSticker(msg, quote) {
-  var chatId = msg.chat.id
-  var options = getOptions(quote._id)
+const sendSticker = (msg, quote) => {
+  const chatId = msg.chat.id
+  const options = getOptions(quote._id)
 
-  var message = quote.quote
   // FOR DEPRECATED STICKER SYNTAX, YEAH ILL DEAL WITH IT LATER
   if (quote.quote.substr(0, 5) == 'sti!:') {
-    var stickerId = quote.quote.split(':')[1].split('(')[0]
+    const stickerId = quote.quote.split(':')[1].split('(')[0]
     try {
       console.log(stickerId)
       bot.sendSticker(chatId, stickerId, options)
@@ -82,13 +81,13 @@ function sendSticker(msg, quote) {
   }
 }
 
-function getOptions(quoteId) {
+const getOptions = quoteId => {
   if (!quoteId) {
-    var options = {
+    const options = {
       parse_mode: 'Markdown'
     }
   } else {
-    var options = {
+    const options = {
       reply_markup: JSON.stringify({
         inline_keyboard: [
           [
@@ -105,10 +104,7 @@ function getOptions(quoteId) {
   return options
 }
 
-function parseMessage(msg, message) {
-  if (message == process.env.OLLI1) {
-    message = process.env.OLLI2
-  }
+const parseMessage = (msg, message) => {
   message = message.replaceAll(':user:', msg.from.first_name)
   if (msg.text && msg.text.indexOf('[a]') != -1) {
     message = message.split('')
@@ -117,7 +113,7 @@ function parseMessage(msg, message) {
   return message
 }
 
-String.prototype.replaceAll = function(search, replacement) {
-  var target = this
+String.prototype.replaceAll = (search, replacement) => {
+  const target = this
   return target.split(search).join(replacement)
 }
