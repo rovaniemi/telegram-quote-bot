@@ -1,7 +1,6 @@
 import { Quote, Group } from '../../schemas'
 import TelegramBot from 'node-telegram-bot-api'
 import { sendMessage, sendQuote } from '../../bot/botOutput'
-const bot = new TelegramBot(process.env.API_TOKEN)
 
 function add(msg, match) {
   const chatId = msg.chat.id
@@ -143,7 +142,7 @@ function findQuote(msg, match) {
     }
     if (quote) {
       for (var i in quote) {
-        bot.sendMessage(chatId, quote[i].quote + ' ' + quote[i]._id)
+        sendMessage(chatId, quote[i].quote + ' ' + quote[i]._id)
       }
     }
   })
